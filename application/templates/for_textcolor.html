@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    {% import '_macros.html' as macros %}
+</head>
+<body>
+    {% set colors = cycler('red', 'yellow', 'lawngreen' ,'green', 'olivedrop', 'blue', 'skyblue', 'salmon', 'purple', 'brown', 'grey' ) %}
+
+    <form method=post>
+        {%  if btn == True  %}
+            <div>
+    {{ macros.random_color('안녕하세요', colors) }}
+        <b>
+        <i>
+            <u>
+                    {{ macros.random_color('레 터 플 라 이', colors) }}
+            </u>
+        </i>
+        </b>
+            {{ macros.random_color('입니다', colors) }}
+    </div>
+
+            <button type=submit class="btn btn-default" name="button" value="off">
+                <br>검은색으로 변경
+            </button>
+        {% else %}
+
+            <div>안녕하세요
+        <b>
+        <i>
+            <u>
+                        레 터 플 라 이
+            </u>
+        </i>
+        </b>입니다.
+    </div>
+            <button type=submit class="btn btn-default" name="button" value="on">
+                <br>반짝 반짝
+            </button>
+        {%  endif  %}
+    </form>
+
+</body>
+</html>
