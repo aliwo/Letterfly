@@ -8,4 +8,4 @@ socketio.init_app(application)
 
 application.config['SECRET_KEY'] = 'gjr39dkjn344_!67#'
 
-from application import routes, jinja, socketIOevents
+from application import routes, socketIOevents
