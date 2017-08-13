@@ -3,3 +3,9 @@
     <span style="color: {{cycler.next()}}">{{character}}</span>
     {% endfor %}
 {%- endmacro %}
+
+{% macro random_color_with_u(words, cycler) -%}
+    {% for character in words %}
+    <span style="color: {{cycler.next()}}"><u>{{character}}</u></span>
+    {% endfor %}
+{%- endmacro %}

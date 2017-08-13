@@ -6,18 +6,12 @@ from application import socketio
 def joined(message):
     room = session.get('room')
     join_room(room)
-    emit('status', {'msg': session.get('name') + ' has entered the room.'}, room=room)
+    emit('status', {'msg': session.get('name') + '님이 편지를 쓰러 오셨습니다.'}, room=room)
 
 @socketio.on('type_word', namespace='/word')
 def word_space(message):
     room = session.get('room')
-    code = message['code']
-    if code == 13:
-        emit('word_message', {'msg':message['msg']+ '\n'}, room=room)
-    elif code == 32:
-        emit('word_message', {'msg':message['msg']+ ' '}, room=room)
-    elif code == 8:
-        emit('word_message', {'msg':message['msg'][:-1]}, room=room)
+    emit('word_message', {'msg':message['msg']}, room=room)
 
 @socketio.on('left', namespace='/word')
 def left(message):

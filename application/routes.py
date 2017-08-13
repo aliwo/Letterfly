@@ -1,6 +1,8 @@
-from application import application
-from flask import request, render_template, session, redirect, url_for
+from application import application,models
+from flask import request, render_template, session, redirect, url_for, send_from_directory, jsonify
 from .forms import LoginForm
+from application.errors import InvalidUsage
+from sqlalchemy import desc
 
 
 @application.route('/', methods=['GET', 'POST'])
@@ -14,6 +16,10 @@ def index():
         form.name.data = session.get('name', '')
         form.room.data = session.get('room', '')
     return render_template('index.html', form=form)
+
+@application.route('/static/<string:filename>')
+def static_file(filename):
+    return send_from_directory('./templates', filename)
 
 @application.route('/text', methods=['GET', 'POST'])
 def show_text():
@@ -34,6 +40,37 @@ def editor():
         return redirect(url_for('index'))
     return render_template('word.html', name=name, room=room)
 
-#GET을 하면 에디터 페이지를 보여줌
-#글자를 써서 /editor에 포스트 하면 해당 내용을 .txt로 써서 저장.
-#백엔드의 모든 기능을 사용한다. 난 백으로 지원한 거임 ^^
+@application.route('/storeData', methods=['POST'])
+def storeData():
+    text = request.form.get('text')
+    name = session.get('name', '')
+    letter = models.Letter(text=text, user_id=name)
+    models.db.session.add(letter)
+    models.db.session.commit()
+    return 'letter saved'
+
+@application.route('/recommendation', methods=['GET', 'POST'])
+def recommendation():
+    if request.method=='GET':
+        targets = models.Target.query.all()
+        targets = {'targets':targets}
+        return render_template('recommendation.html', targets=targets)
+
+    if request.method== 'POST':
+        target = request.form.get('target')
+        if target:
+            target = models.Target.query.filter_by(name=target).first()
+            recommendations = models.Recommendation.query\
+                .filter_by(target_id=target.id)\
+                .order_by(desc(models.Recommendation.upvotes))\
+                .all()
+            result = {'recommendations':recommendations}
+            return render_template('recommendation.html', result=result)
+        else:
+            raise InvalidUsage('invalid target', status_code=400)
+
+@application.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response

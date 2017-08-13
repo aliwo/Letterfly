@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>웹 텍스트 에디터 {{ room }}</title>
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script type="text/javascript" src="static/jquery.redirect.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            $(document).ready(function()
+            {
+                socket = io.connect('http://' + document.domain + ':' + location.port + '/word');
+                socket.on('connect', function()
+                {
+                    socket.emit('joined', {});
+                });
+                socket.on('message', function(data) {
+                    $('#chat').val($('#chat').val() + data.msg + '\n');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                });
+                socket.on('word_message', function(data)
+                {
+                    $('#word').val(data.msg);
+                    $('#word').scrollTop($('#word')[0].scrollHeight);
+                });
+                var wordbox = $('#word');
+                wordbox.keyup(function (e)
+                {
+                    var code = e.keyCode || e.which;
+                    if (code == 13 || code==32 || code ==8) //스페이스바, 엔터, 백스페이스
+                    {
+                        text = $('#word').val();
+                        socket.emit('type_word', {msg: text, code:code});
+                    }
+                });
+
+                 wordbox.keydown(function (e) //chrome은 keypress-> 백 스페이스를 인식 못합니다. 대신 keydown에서는 인식합니다.
+                 {
+                     var code = e.keyCode || e.which;
+                     if (code == 8) //백 스페이스
+                     {
+                         text = $('#word').val();
+                         socket.emit('word_backspace', {msg: text});
+                     }
+                 });
+
+                 $('#storeData').click(function ()
+                 {
+                     text = $('#word').val();
+                     $.redirect("/storeData", {"text": text});
+                 })
+
+            });
+            function leave_room()
+            {
+                socket.emit('left', {}, function() {
+                    socket.disconnect();
+                    // go back to the login page
+                    window.location.href = "{{ url_for('index') }}";
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <h1>웹 텍스트 에디터: {{ room }}</h1>
+        <a href="/recommendation" >편지 쓰기가 막막하세요?</a><br><br>
+        <textarea id="word" cols="80" rows="20" placeholder=""></textarea><br><br>
+        <button id="storeData" type="submit">저장하기</button><br><br>
+        <a href="#" onclick="leave_room();">문서 나가기</a><br><br>
+    </body>
+</html>

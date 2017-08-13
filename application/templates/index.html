@@ -1,14 +1,27 @@
 <html>
     <head>
-        <title>Flask-SocketIO-Chat</title>
+        <title>ForLetterFly</title>
     </head>
     <body>
-        <h1>Flask-SocketIO-Chat</h1>
+        <h1>LetterFly</h1>
         <form method="POST">
             {{ form.hidden_tag() }}
             {{ form.name.label }}: {{ form.name() }} {% for error in form.name.errors %}{{ error }}{% endfor %}<br>
             {{ form.room.label }}: {{ form.room() }} {% for error in form.room.errors %}{{ error }}{% endfor %}<br>
             {{ form.submit() }}
         </form>
+
+        안녕하세요, LetterFly! <br>
+        1번 문제: /text 경로로 요청하면 1번 문제 페이지를 보실 수 있습니다. <br>
+        <a href="/text">1번 문제</a><br>
+        프로젝트 안에서는 application/templates에서 text_for_colorblinded와 text html 파일 입니다. <br>
+        <br>
+        2번 문제: SocketIO로 GoogleDocs의 동시 편집 기능을 구현하였습니다. <br>
+        시작하기: 위에 보이시는 간단한 로그인 화면에 아무 사용자 이름과, 아무 Room number(socketIO에서 필요합니다.)<br>
+        를 입력하시면 편지 에디터로 이동합니다.<br>
+        <br>
+
+
+
     </body>
 </html>

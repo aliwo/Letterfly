@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inspiration</title>
+</head>
+<body>
+
+    {% if  not result  %}
+    누구에게 편지를 쓰시는 것인지 물어봐도 될까요? <br><br>
+
+    <form method="post" action="/recommendation">
+        <select name="target">
+            {% for target in targets['targets'] %}
+            <option value="{{target.name}}">{{target.name_kor}} </option>
+            {% endfor %}
+        </select>
+        <input type="submit">
+    </form>
+
+    {% elif result %}
+
+        편지 쓰는데 도움이 될 만한 영감을 드릴게요<br><br>
+
+        {% for recomendation in result['recommendations'] %}
+            {{ recomendation.text}} <a href="{{ recomendation.image_url }}"> 이미지 보기</a> 추천 수: {{ recomendation.upvotes }}<br>
+        {% endfor %}
+
+    {% endif %}
+
+</body>
+</html>
